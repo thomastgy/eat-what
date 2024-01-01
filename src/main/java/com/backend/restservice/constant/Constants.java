@@ -5,6 +5,7 @@ public final class Constants {
     }
 
     public static final String SESSION_ENDED_MSG = "Session has already ended.";
+    public static final String EMPTY_RESTAURANT_MSG = "There are not restaurant in the list.";
     public static final String JOINED_SESSION_MSG = "You are already a participant in this session";
     public static final String RESTAURANT_EXIST_MSG = "Restaurant is already in the list";
     public static final String UNAUTHORIZED_MSG = "You are not allowed to do this.";

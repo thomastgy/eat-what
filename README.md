@@ -2,7 +2,7 @@
 
 ## Design Considerations & Assumptions
 
-1. The application is designed as a REST API backend service that is meant to be consumed by an frontend application
+1. The application is designed as a REST API backend service that is meant to be consumed by a front-end application
 2. User can create as many sessions as they want
 3. There is no need to track which user submitted what restaurant (Anonymity)
 4. One participant can join many sessions concurrently

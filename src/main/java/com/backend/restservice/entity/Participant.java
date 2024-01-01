@@ -1,9 +1,13 @@
 package com.backend.restservice.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Participant {
@@ -12,6 +16,9 @@ public class Participant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+
+    @ManyToMany(mappedBy = "participant")
+    private List<Session> sessions = new ArrayList<>();
 
     public Participant() {
     }

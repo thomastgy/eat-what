@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
@@ -27,8 +29,8 @@ public class Session {
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
     private Restaurant result;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "session_id", referencedColumnName = "id")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "session_participant", joinColumns = @JoinColumn(name = "session_id"), inverseJoinColumns = @JoinColumn(name = "participant_id"))
     private List<Participant> participant = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)

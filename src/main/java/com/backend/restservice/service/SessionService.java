@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,7 @@ import static com.backend.restservice.helper.SessionHelper.sanitizeInput;
 import static com.backend.restservice.helper.SessionHelper.selectRestaurant;
 
 import static com.backend.restservice.constant.Constants.UNAUTHORIZED_MSG;
+import static com.backend.restservice.constant.Constants.EMPTY_RESTAURANT_MSG;
 import static com.backend.restservice.constant.Constants.JOINED_SESSION_MSG;
 import static com.backend.restservice.constant.Constants.RESTAURANT_EXIST_MSG;
 import static com.backend.restservice.constant.Constants.SESSION_ENDED_MSG;
@@ -37,12 +37,13 @@ public class SessionService implements ISessionService {
     private final ParticipantRepository participantRepository;
     private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
-    @Autowired
     CacheManager cacheManager;
 
-    SessionService(SessionRepository repository, ParticipantRepository participantRepository) {
+    public SessionService(SessionRepository repository, ParticipantRepository participantRepository,
+            CacheManager cacheManager) {
         this.repository = repository;
         this.participantRepository = participantRepository;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -154,7 +155,6 @@ public class SessionService implements ISessionService {
         logger.info("User: {} ending session ID: {}", currUser, id);
 
         Session session = repository.findById(id).orElseThrow(() -> new SessionNotFoundException(id));
-
         if (!session.getCreator().equals(currUser)) {
             logger.warn("Unauthorized attempt by user: {} to end session ID: {}", currUser, id);
             return new ApiResponse<>(false, UNAUTHORIZED_MSG);
@@ -165,8 +165,12 @@ public class SessionService implements ISessionService {
             return new ApiResponse<>(false, SESSION_ENDED_MSG);
         }
 
-        session.setIsActive(false);
         List<Restaurant> restaurantList = session.getRestaurant();
+        if (restaurantList.size() == 0) {
+            return new ApiResponse<>(false, EMPTY_RESTAURANT_MSG);
+        }
+
+        session.setIsActive(false);
         Restaurant result = selectRestaurant(restaurantList);
         session.setResult(result);
         repository.save(session);
